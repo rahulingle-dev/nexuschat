@@ -1,0 +1,6 @@
+@NexusChat.API_HostAddress = http://localhost:5009
+
+GET {{NexusChat.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

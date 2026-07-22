@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "NexusChat",
+    "slug": "nexuschat",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nexuschat.app"
+    },
+    "android": {
+      "package": "com.nexuschat.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Allow NexusChat to access your camera for video calling.",
+          "microphonePermission": "Allow NexusChat to access your microphone for voice calling and speech-to-text."
+        }
+      ]
+    ]
+  }
+}

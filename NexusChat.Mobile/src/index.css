@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-dark: #0b141a;
+  --bg-card: #111b21;
+  --bg-input: #202c33;
+  --bg-bubble-sent: #005c4b;
+  --bg-bubble-received: #202c33;
+  --accent-emerald: #00a884;
+  --accent-green: #25d366;
+  --text-primary: #e9edef;
+  --text-secondary: #8696a0;
+  --text-muted: #667781;
+  --border-color: #222d34;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: #04090d;
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Mobile Frame Wrapper */
+.mobile-device-container {
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
+  max-height: 900px;
+  background-color: var(--bg-dark);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+@media (min-width: 640px) {
+  .mobile-device-container {
+    height: 92vh;
+    border-radius: 40px;
+    border: 8px solid #1f2937;
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(134, 150, 160, 0.3);
+  border-radius: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.08); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 1.5s infinite ease-in-out;
+}

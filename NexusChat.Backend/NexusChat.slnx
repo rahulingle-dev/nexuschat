@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NexusChat.API/NexusChat.API.csproj" />
+    <Project Path="src/NexusChat.Application/NexusChat.Application.csproj" />
+    <Project Path="src/NexusChat.Domain/NexusChat.Domain.csproj" />
+    <Project Path="src/NexusChat.Infrastructure/NexusChat.Infrastructure.csproj" />
+  </Folder>
+</Solution>

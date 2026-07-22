@@ -1,0 +1,35 @@
+{
+  "name": "nexuschat-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "dev": "vite --port 3000 --open",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@expo/metro-runtime": "~4.0.1",
+    "@microsoft/signalr": "^8.0.7",
+    "axios": "^1.18.1",
+    "expo": "~52.0.0",
+    "expo-asset": "~11.0.5",
+    "expo-font": "~13.0.4",
+    "expo-splash-screen": "~0.29.24",
+    "expo-status-bar": "~2.0.0",
+    "lucide-react": "^0.469.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.7",
+    "react-native-web": "~0.19.13",
+    "react-native-webrtc": "^124.0.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.5"
+  }
+}
