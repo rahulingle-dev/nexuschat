@@ -70,9 +70,18 @@ namespace NexusChat.Infrastructure.RealTime
             await _chatHubContext.Clients.Group($"chat_{chatId}").SendAsync("MessageDeleted", chatId.ToString(), messageId.ToString());
         }
 
-        public async Task NotifyChatClearedAsync(Guid chatId)
+        public async Task NotifyChatClearedAsync(Guid chatId, Guid? userId = null)
         {
-            await _chatHubContext.Clients.Group($"chat_{chatId}").SendAsync("ChatCleared", chatId.ToString());
+            if (userId.HasValue)
+            {
+                var userIdStr = userId.Value.ToString().ToLower();
+                await _chatHubContext.Clients.User(userIdStr).SendAsync("ChatCleared", chatId.ToString());
+                await _chatHubContext.Clients.Group($"user_{userIdStr}").SendAsync("ChatCleared", chatId.ToString());
+            }
+            else
+            {
+                await _chatHubContext.Clients.Group($"chat_{chatId}").SendAsync("ChatCleared", chatId.ToString());
+            }
         }
     }
 }

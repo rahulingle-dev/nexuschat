@@ -35,5 +35,7 @@ namespace NexusChat.Application.DTOs
         public DateTimeOffset SentAt { get; set; }
         public DateTimeOffset? DeliveredAt { get; set; }
         public DateTimeOffset? ReadAt { get; set; }
+        public bool IsForwarded { get; set; }
+        public Guid? ForwardedFromMessageId { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace NexusChat.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -100,6 +100,9 @@ namespace NexusChat.Infrastructure.Migrations
                     b.Property<Guid>("ChatId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTimeOffset?>("ClearedAt")
+                        .HasColumnType("datetimeoffset");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("datetimeoffset");
 
@@ -163,6 +166,12 @@ namespace NexusChat.Infrastructure.Migrations
 
                     b.Property<string>("FileUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ForwardedFromMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsForwarded")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MessageType")
                         .HasColumnType("int");
@@ -316,6 +325,34 @@ namespace NexusChat.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("NexusChat.Domain.Entities.UserDeletedMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("MessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId", "MessageId")
+                        .IsUnique();
+
+                    b.ToTable("UserDeletedMessages");
+                });
+
             modelBuilder.Entity("NexusChat.Domain.Entities.CallLog", b =>
                 {
                     b.HasOne("NexusChat.Domain.Entities.User", "Caller")
@@ -385,6 +422,25 @@ namespace NexusChat.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("NexusChat.Domain.Entities.UserDeletedMessage", b =>
+                {
+                    b.HasOne("NexusChat.Domain.Entities.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NexusChat.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Message");

@@ -105,6 +105,34 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dbContext.Database.EnsureCreated();
+
+    if (!dbContext.Users.Any())
+    {
+        using var sha256 = System.Security.Cryptography.SHA256.Create();
+        var passwordHash = Convert.ToBase64String(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes("Admin@123")));
+
+        var seedUsers = new System.Collections.Generic.List<NexusChat.Domain.Entities.User>
+        {
+            new() { Username = "johndoe", Email = "john.doe@example.com", FullName = "John Doe", PasswordHash = passwordHash, Bio = "Hey there! I am John.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-30) },
+            new() { Username = "janesmith", Email = "jane.smith@example.com", FullName = "Jane Smith", PasswordHash = passwordHash, Bio = "Designing is my passion.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-2) },
+            new() { Username = "michaelj", Email = "michael.johnson@example.com", FullName = "Michael Johnson", PasswordHash = passwordHash, Bio = "Developer & tech enthusiast.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-5) },
+            new() { Username = "emilydavis", Email = "emily.davis@example.com", FullName = "Emily Davis", PasswordHash = passwordHash, Bio = "Always learning.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddDays(-1) },
+            new() { Username = "davidbrown", Email = "david.brown@example.com", FullName = "David Brown", PasswordHash = passwordHash, Bio = "Let's connect!", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-4) },
+            new() { Username = "sarahwilson", Email = "sarah.wilson@example.com", FullName = "Sarah Wilson", PasswordHash = passwordHash, Bio = "Nature lover.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-45) },
+            new() { Username = "jamestaylor", Email = "james.taylor@example.com", FullName = "James Taylor", PasswordHash = passwordHash, Bio = "Sports fan.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-1) },
+            new() { Username = "amandathomas", Email = "amanda.thomas@example.com", FullName = "Amanda Thomas", PasswordHash = passwordHash, Bio = "Coffee is life.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddDays(-2) },
+            new() { Username = "robertjackson", Email = "robert.jackson@example.com", FullName = "Robert Jackson", PasswordHash = passwordHash, Bio = "Traveler.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-15) },
+            new() { Username = "jessicawhite", Email = "jessica.white@example.com", FullName = "Jessica White", PasswordHash = passwordHash, Bio = "Foodie.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-5) },
+            new() { Username = "williamharris", Email = "william.harris@example.com", FullName = "William Harris", PasswordHash = passwordHash, Bio = "Coding all day.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-10) },
+            new() { Username = "oliviamartin", Email = "olivia.martin@example.com", FullName = "Olivia Martin", PasswordHash = passwordHash, Bio = "Reading books.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-3) },
+            new() { Username = "josephgarcia", Email = "joseph.garcia@example.com", FullName = "Joseph Garcia", PasswordHash = passwordHash, Bio = "Gamer.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddMinutes(-50) },
+            new() { Username = "sophiamartinez", Email = "sophia.martinez@example.com", FullName = "Sophia Martinez", PasswordHash = passwordHash, Bio = "Music is my escape.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddDays(-3) },
+            new() { Username = "thomasrobinson", Email = "thomas.robinson@example.com", FullName = "Thomas Robinson", PasswordHash = passwordHash, Bio = "Photographer.", IsEmailVerified = true, IsOnline = false, LastSeenAt = DateTimeOffset.UtcNow.AddHours(-6) }
+        };
+
+        dbContext.Users.AddRange(seedUsers);
+        dbContext.SaveChanges();
+    }
 }
 
 app.Run();

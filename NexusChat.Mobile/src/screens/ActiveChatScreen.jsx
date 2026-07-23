@@ -5,12 +5,15 @@ import { getChatMessages, sendMessage, markAsRead, toggleChatFlag, clearChat, de
 import { MessageBubble } from '../components/MessageBubble';
 import { VoiceToTextInput } from '../components/VoiceToTextInput';
 import { AttachmentModal } from '../components/AttachmentModal';
+import { CameraModal } from '../components/CameraModal';
 import { sendTypingIndicator, joinChatGroup, leaveChatGroup } from '../services/signalr';
 
 export const ActiveChatScreen = ({ activeChat, currentUser, token, connection, onBack, onStartCall, onOpenUserProfile, onOpenGroupDetails, onChatUpdated }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [isAttachmentOpen, setIsAttachmentOpen] = useState(false);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const flatListRef = useRef(null);
 
   const targetUser = activeChat?.members?.find(m => m.id?.toString().toLowerCase() !== currentUser.id?.toString().toLowerCase()) || null;
@@ -271,14 +274,6 @@ export const ActiveChatScreen = ({ activeChat, currentUser, token, connection, o
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
-          <TouchableOpacity onPress={handleToggleFavourite}>
-            <Ionicons 
-              name={activeChat.isFavourite ? "star" : "star-outline"} 
-              size={21} 
-              color={activeChat.isFavourite ? "#eab308" : "#8696a0"} 
-            />
-          </TouchableOpacity>
-
           <TouchableOpacity onPress={() => handleInitiateCall(false)}>
             <Ionicons name="call-outline" size={21} color="#00a884" />
           </TouchableOpacity>
@@ -287,21 +282,67 @@ export const ActiveChatScreen = ({ activeChat, currentUser, token, connection, o
             <Ionicons name="videocam-outline" size={22} color="#00a884" />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleClearChat}>
-            <Ionicons name="trash-outline" size={21} color="#8696a0" />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => {
-            if (activeChat.type === 1) {
-              onOpenGroupDetails && onOpenGroupDetails();
-            } else {
-              onOpenUserProfile && onOpenUserProfile(targetUser || currentUser);
-            }
-          }}>
-            <Ionicons name="information-circle-outline" size={22} color="#8696a0" />
+          <TouchableOpacity onPress={() => setMenuOpen(!menuOpen)}>
+            <Ionicons name="ellipsis-vertical" size={21} color="#8696a0" />
           </TouchableOpacity>
         </View>
       </View>
+
+      {/* Dropdown Menu Overlay */}
+      {menuOpen && (
+        <TouchableOpacity 
+          style={styles.menuOverlay} 
+          activeOpacity={1} 
+          onPress={() => setMenuOpen(false)}
+        >
+          <View style={styles.dropdownMenu}>
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => {
+                setMenuOpen(false);
+                handleToggleFavourite();
+              }}
+            >
+              <Ionicons 
+                name={activeChat.isFavourite ? "star" : "star-outline"} 
+                size={18} 
+                color={activeChat.isFavourite ? "#eab308" : "#8696a0"} 
+              />
+              <Text style={styles.menuItemText}>
+                {activeChat.isFavourite ? "Unstar Chat" : "Star Chat"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => {
+                setMenuOpen(false);
+                if (activeChat.type === 1) {
+                  onOpenGroupDetails && onOpenGroupDetails();
+                } else {
+                  onOpenUserProfile && onOpenUserProfile(targetUser || currentUser);
+                }
+              }}
+            >
+              <Ionicons name="information-circle-outline" size={18} color="#8696a0" />
+              <Text style={styles.menuItemText}>Chat Info</Text>
+            </TouchableOpacity>
+
+            <View style={styles.menuDivider} />
+
+            <TouchableOpacity 
+              style={styles.menuItem} 
+              onPress={() => {
+                setMenuOpen(false);
+                handleClearChat();
+              }}
+            >
+              <Ionicons name="trash-outline" size={18} color="#ef4444" />
+              <Text style={[styles.menuItemText, { color: '#ef4444' }]}>Clear Chat</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      )}
 
       {/* Message List */}
       <View style={{ flex: 1, paddingHorizontal: 14, paddingTop: 10 }}>
@@ -335,6 +376,7 @@ export const ActiveChatScreen = ({ activeChat, currentUser, token, connection, o
       <VoiceToTextInput
         onSend={handleSendText}
         onOpenAttachment={() => setIsAttachmentOpen(true)}
+        onOpenCamera={() => setIsCameraOpen(true)}
         onTyping={handleTyping}
       />
 
@@ -342,6 +384,14 @@ export const ActiveChatScreen = ({ activeChat, currentUser, token, connection, o
       <AttachmentModal
         isOpen={isAttachmentOpen}
         onClose={() => setIsAttachmentOpen(false)}
+        token={token}
+        onSendAttachment={handleSendAttachmentPayload}
+      />
+
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={isCameraOpen}
+        onClose={() => setIsCameraOpen(false)}
         token={token}
         onSendAttachment={handleSendAttachmentPayload}
       />
@@ -407,5 +457,47 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 12.5,
     lineHeight: 18
+  },
+  menuOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000
+  },
+  dropdownMenu: {
+    position: 'absolute',
+    top: 55,
+    right: 12,
+    backgroundColor: '#1f2c34',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#374248',
+    paddingVertical: 4,
+    minWidth: 160,
+    zIndex: 1001,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12
+  },
+  menuItemText: {
+    color: '#e9edef',
+    fontSize: 14,
+    fontWeight: '500'
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#374248',
+    marginVertical: 4
   }
 });

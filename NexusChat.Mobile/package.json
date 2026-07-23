@@ -12,6 +12,7 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@config-plugins/react-native-webrtc": "^15.0.1",
     "@expo/metro-runtime": "~4.0.1",
     "@microsoft/signalr": "^8.0.7",
     "axios": "^1.18.1",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
     "@vitejs/plugin-react": "^4.3.4",
     "vite": "^6.0.5"
   }

@@ -3,9 +3,13 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 const getHubUrl = () => {
+  const isHttps = typeof window !== 'undefined' && window.location?.protocol === 'https:';
+  const port = isHttps ? '7201' : '5009';
+  const protocol = isHttps ? 'https' : 'http';
+
   if (Platform.OS === 'web' && typeof window !== 'undefined' && window.location?.hostname) {
     const hostname = window.location.hostname;
-    return `http://${hostname}:5009/hubs/chat`;
+    return `${protocol}://${hostname}:${port}/hubs/chat`;
   }
 
   try {
@@ -13,7 +17,7 @@ const getHubUrl = () => {
     if (hostUri) {
       const laptopIp = hostUri.split(':')[0];
       if (laptopIp && laptopIp !== 'localhost' && laptopIp !== '127.0.0.1') {
-        return `http://${laptopIp}:5009/hubs/chat`;
+        return `${protocol}://${laptopIp}:${port}/hubs/chat`;
       }
     }
   } catch (e) {}
@@ -22,7 +26,7 @@ const getHubUrl = () => {
     return 'http://10.0.2.2:5009/hubs/chat';
   }
 
-  return 'http://localhost:5009/hubs/chat';
+  return `${protocol}://localhost:${port}/hubs/chat`;
 };
 
 let hubConnection = null;

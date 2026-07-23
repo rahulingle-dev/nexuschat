@@ -60,12 +60,27 @@ namespace NexusChat.Application.Features.Chats
                     .Where(m => m.ChatId == chatId)
                     .ToListAsync(cancellationToken);
 
-                // Load last message
-                var lastMsg = await _context.Messages
+                // Load last message respecting ClearedAt and soft-deletes
+                var lastMsgQuery = _context.Messages
                     .AsNoTracking()
-                    .Where(m => m.ChatId == chatId)
+                    .Where(m => m.ChatId == chatId);
+
+                if (cm.ClearedAt.HasValue)
+                {
+                    lastMsgQuery = lastMsgQuery.Where(m => m.SentAt > cm.ClearedAt.Value);
+                }
+
+                lastMsgQuery = lastMsgQuery.Where(m => !_context.UserDeletedMessages.Any(udm => udm.MessageId == m.Id && udm.UserId == request.UserId));
+
+                var lastMsg = await lastMsgQuery
                     .OrderByDescending(m => m.SentAt)
                     .FirstOrDefaultAsync(cancellationToken);
+
+                // If chat was cleared and has no new messages, hide it from the user's list
+                if (cm.ClearedAt.HasValue && lastMsg == null)
+                {
+                    continue;
+                }
 
                 string? displayName = chat.Name;
                 string? displayAvatar = chat.ImageUrl;

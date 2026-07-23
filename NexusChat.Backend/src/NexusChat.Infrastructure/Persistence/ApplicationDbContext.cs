@@ -17,6 +17,7 @@ namespace NexusChat.Infrastructure.Persistence
         public DbSet<MessageReaction> MessageReactions => Set<MessageReaction>();
         public DbSet<CallLog> CallLogs => Set<CallLog>();
         public DbSet<OtpVerification> OtpVerifications => Set<OtpVerification>();
+        public DbSet<UserDeletedMessage> UserDeletedMessages => Set<UserDeletedMessage>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -104,6 +105,23 @@ namespace NexusChat.Infrastructure.Persistence
             {
                 entity.HasKey(o => o.Id);
                 entity.HasIndex(o => new { o.Email, o.Purpose });
+            });
+
+            // UserDeletedMessage Configurations
+            modelBuilder.Entity<UserDeletedMessage>(entity =>
+            {
+                entity.HasKey(udm => udm.Id);
+                entity.HasOne(udm => udm.Message)
+                      .WithMany()
+                      .HasForeignKey(udm => udm.MessageId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(udm => udm.User)
+                      .WithMany()
+                      .HasForeignKey(udm => udm.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(udm => new { udm.UserId, udm.MessageId }).IsUnique();
             });
         }
     }

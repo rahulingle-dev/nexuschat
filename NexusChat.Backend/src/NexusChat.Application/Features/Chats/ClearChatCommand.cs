@@ -32,27 +32,14 @@ namespace NexusChat.Application.Features.Chats
                 throw new InvalidOperationException("You are not a member of this chat.");
             }
 
-            // Retrieve all messages in this chat
-            var messages = await _context.Messages
-                .Where(m => m.ChatId == request.ChatId)
-                .ToListAsync(cancellationToken);
-
-            _context.Messages.RemoveRange(messages);
-
-            // Reset unread count for members
-            var members = await _context.ChatMembers
-                .Where(cm => cm.ChatId == request.ChatId)
-                .ToListAsync(cancellationToken);
-
-            foreach (var member in members)
-            {
-                member.UnreadCount = 0;
-            }
+            // Set ClearedAt for this member (soft delete from my side)
+            membership.ClearedAt = DateTimeOffset.UtcNow;
+            membership.UnreadCount = 0;
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            // Notify all clients in the chat group
-            await _signalRNotifier.NotifyChatClearedAsync(request.ChatId);
+            // Notify only this client via SignalR
+            await _signalRNotifier.NotifyChatClearedAsync(request.ChatId, request.UserId);
 
             return true;
         }

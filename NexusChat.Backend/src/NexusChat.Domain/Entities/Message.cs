@@ -22,6 +22,9 @@ namespace NexusChat.Domain.Entities
         public DateTimeOffset SentAt { get; set; } = DateTimeOffset.UtcNow;
         public DateTimeOffset? DeliveredAt { get; set; }
         public DateTimeOffset? ReadAt { get; set; }
+        
+        public bool IsForwarded { get; set; } = false;
+        public Guid? ForwardedFromMessageId { get; set; }
 
         public ICollection<MessageReaction> Reactions { get; set; } = new List<MessageReaction>();
     }

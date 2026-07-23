@@ -26,9 +26,9 @@ namespace NexusChat.API.Controllers
         }
 
         [HttpGet("{chatId:guid}")]
-        public async Task<IActionResult> GetChatMessages(Guid chatId, [FromQuery] int skip = 0, [FromQuery] int take = 50)
+        public async Task<IActionResult> GetChatMessages(Guid chatId, [FromQuery] Guid? userId, [FromQuery] int skip = 0, [FromQuery] int take = 50)
         {
-            var messages = await _mediator.Send(new GetChatMessagesQuery(chatId, skip, take));
+            var messages = await _mediator.Send(new GetChatMessagesQuery(chatId, userId, skip, take));
             return Ok(messages);
         }
 
@@ -103,12 +103,40 @@ namespace NexusChat.API.Controllers
         }
 
         [HttpDelete("{messageId:guid}")]
-        public async Task<IActionResult> DeleteMessage(Guid messageId, [FromQuery] Guid userId)
+        public async Task<IActionResult> DeleteMessage(Guid messageId, [FromQuery] Guid userId, [FromQuery] bool deleteForEveryone = false)
         {
             try
             {
-                var result = await _mediator.Send(new DeleteMessageCommand(messageId, userId));
+                var result = await _mediator.Send(new DeleteMessagesCommand(new List<Guid> { messageId }, userId, deleteForEveryone));
                 return Ok(new { success = result });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("delete-multiple")]
+        public async Task<IActionResult> DeleteMultipleMessages([FromBody] DeleteMessagesCommand command)
+        {
+            try
+            {
+                var result = await _mediator.Send(command);
+                return Ok(new { success = result });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPost("forward")]
+        public async Task<IActionResult> ForwardMessages([FromBody] ForwardMessagesCommand command)
+        {
+            try
+            {
+                var messages = await _mediator.Send(command);
+                return Ok(messages);
             }
             catch (InvalidOperationException ex)
             {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, Alert } from 'react-native';
 import { Ionicons, Feather } from '@expo/vector-icons';
 
-export const VoiceToTextInput = ({ onSend, onOpenAttachment, onTyping }) => {
+export const VoiceToTextInput = ({ onSend, onOpenAttachment, onOpenCamera, onTyping }) => {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef(null);
@@ -64,6 +64,10 @@ export const VoiceToTextInput = ({ onSend, onOpenAttachment, onTyping }) => {
     <View style={styles.container}>
       <TouchableOpacity style={styles.iconBtn} onPress={onOpenAttachment}>
         <Ionicons name="attach" size={24} color="#8696a0" />
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.iconBtn} onPress={onOpenCamera}>
+        <Ionicons name="camera" size={24} color="#8696a0" />
       </TouchableOpacity>
 
       <View style={styles.inputWrapper}>

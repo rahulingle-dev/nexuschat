@@ -14,6 +14,7 @@ namespace NexusChat.Application.Common.Interfaces
         DbSet<MessageReaction> MessageReactions { get; }
         DbSet<CallLog> CallLogs { get; }
         DbSet<OtpVerification> OtpVerifications { get; }
+        DbSet<UserDeletedMessage> UserDeletedMessages { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

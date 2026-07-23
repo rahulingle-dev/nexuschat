@@ -12,6 +12,6 @@ namespace NexusChat.Application.Common.Interfaces
         Task NotifyUserTypingAsync(Guid chatId, Guid userId, string username);
         Task NotifyUserPresenceAsync(Guid userId, bool isOnline);
         Task NotifyMessageDeletedAsync(Guid chatId, Guid messageId);
-        Task NotifyChatClearedAsync(Guid chatId);
+        Task NotifyChatClearedAsync(Guid chatId, Guid? userId = null);
     }
 }

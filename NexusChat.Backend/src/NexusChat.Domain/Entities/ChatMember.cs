@@ -19,5 +19,6 @@ namespace NexusChat.Domain.Entities
         public bool IsArchived { get; set; } = false;
         public bool IsPinned { get; set; } = false;
         public int UnreadCount { get; set; } = 0;
+        public DateTimeOffset? ClearedAt { get; set; }
     }
 }

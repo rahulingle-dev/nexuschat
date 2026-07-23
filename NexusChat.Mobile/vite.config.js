@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { transformSync } from 'esbuild';
+import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
   plugins: [
+    basicSsl(),
     {
       name: 'treat-react-native-node-modules',
       transform(code, id) {
@@ -30,6 +32,10 @@ export default defineConfig({
     react()
   ],
   optimizeDeps: {
+    exclude: [
+      '@react-native/assets-registry',
+      'react-native'
+    ],
     esbuildOptions: {
       loader: {
         '.js': 'jsx'
